@@ -47,5 +47,7 @@ class Sudoku:
 
 if __name__ == "__main__":
     s = Sudoku()
+    start = time.time()
     s.gen_board()
+    print("Time to generate board: ", time.time() - start, " seconds.")
     print(s.board)
