@@ -8,16 +8,6 @@ class Sudoku:
         self.possibilities = np.zeros((9, 9, 9), dtype=np.int)
         self.possibilities[:, :, :] = np.arange(9) + 1
 
-    def check_possibilites(self, row, col, value):
-
-        start_row = int(row / 3) * 3
-        start_col = int(col / 3) * 3
-
-        if np.any(self.possibilities[start_row:start_row + 3, start_col:start_col + 3, value - 1] is False):
-            return False
-
-        return True
-
     def mark_unmark_possibilites(self, row, col, value, mark=True):
         start_row = int(row / 3) * 3
         start_col = int(col / 3) * 3
