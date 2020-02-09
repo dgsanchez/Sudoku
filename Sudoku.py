@@ -9,7 +9,7 @@ class Sudoku:
 		self.possibilities[:, :, :] = np.arange(9) + 1
 
 		self.solved_board = np.full((9, 9), 0)
-		self.row_mrv = np.full(2, 0)	# Save the row with the less mrv.
+		self.row_mrv = np.full(2, 0)  # Save the row with the less mrv.
 		self.less_mrv = 9
 
 	def mark_unmark_possibilites(self, row, col, value, mark=True):
@@ -29,20 +29,27 @@ class Sudoku:
 			self.possibilities[start_row:start_row + 3, start_col:start_col + 3, value - 1] = value
 
 	def mrv(self):
+		all_zeros = True
 		self.row_mrv = 0
-		self.less_mrv = np.unique(np.where(self.possibilities > 0, True, False)[0, :], return_counts=True)[1][1]
+		self.less_mrv = np.unique(self.possibilities[0, self.possibilities[0, :] > 0], return_counts=True)[0].size
+
+		if self.less_mrv > 0:
+			all_zeros = False
 
 		for i in range(1, 9):
-			tmp = np.unique(np.where(self.possibilities > 0, True, False)[i, :], return_counts=True)[1][1]
+			tmp = np.unique(self.possibilities[i, self.possibilities[i, :] > 0], return_counts=True)[0].size
 
 			if tmp != (9 - self.board[i, self.board[i, :] > 0].size):
 				return False
 
-			if tmp < self.less_mrv:
+			if tmp > 0:
+				all_zeros = False
+
+			if self.less_mrv > tmp > 0:
 				self.less_mrv = tmp
 				self.row_mrv = i
 
-		return True
+		return not all_zeros
 
 	def gen_board(self):
 		count = 0
@@ -82,8 +89,14 @@ class Sudoku:
 
 		self.mrv()  # Save the minimum remaining values and the row it's in.
 
-	def solve_board(self):
-		pass
+	def solve_board(self, counter=0):
+		if counter == 0:
+			self.solved_board = self.board.copy()
+
+		else:
+			# Base condition
+			if self.less_mrv == 0:
+				return True
 
 
 if __name__ == "__main__":
@@ -91,4 +104,4 @@ if __name__ == "__main__":
 	start = time.time()
 	s.gen_board()
 	print("Time to generate board: ", time.time() - start, " seconds.")
-	print(s.board)
+	print(s.board, "\n")
